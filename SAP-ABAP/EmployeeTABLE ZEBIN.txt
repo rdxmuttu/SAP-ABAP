@@ -1,0 +1,37 @@
+REPORT ZPROGAM_DAY3_2.
+*TYPES : BEGIN OF ty_name,
+*  emp_id type ZEBIN1-emp_id,
+*  name type ZEBIN1-name,
+*  dept_id type ZEBIN1-dept_id,
+*  end of ty_name.
+*  data : d type ty_name.
+*
+*
+*
+*  parameters p_dept type ZEBIN1-dept_id.
+*  select emp_id name from ZEBIN1 into d where dept_id eq p_dept.
+*    write :/ d-emp_id,d-name.
+*    endselect.
+
+
+
+TYPES: BEGIN OF ty_makt,
+         emp_id   TYPE ZEBIN1-emp_id,
+         name     TYPE ZEBIN1-name,
+         salary   TYPE ZEBIN1-salary,
+         dept_id  TYPE ZEBIN1-dept_id,
+       END OF ty_makt.
+
+DATA: st_makt TYPE ty_makt.
+
+PARAMETERS p_empid TYPE ZEBIN1-emp_id.
+
+SELECT SINGLE emp_id name salary dept_id
+  FROM ZEBIN1 INTO st_makt WHERE Emp_id EQ p_empid.
+
+DATA v_desc TYPE ZEBIN2-dept_desc.
+
+SELECT SINGLE dept_desc
+  FROM ZEBIN2 INTO v_desc WHERE dept_id EQ st_makt-dept_id.
+
+WRITE: st_makt-emp_id, st_makt-name, st_makt-salary, st_makt-dept_id, v_desc.

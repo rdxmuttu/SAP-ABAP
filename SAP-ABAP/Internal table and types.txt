@@ -1,0 +1,122 @@
+REPORT ZEBIN_INTERNAL_TABLE.
+
+TYPES ty_emp_id TYPE c LENGTH 20.
+
+ DATA v_emp_id TYPE ty_emp_id.
+ DATA v_emp_id2 TYPE ty_emp_id.
+
+TYPES : BEGIN OF ty_makt,
+  matnr TYPE makt-matnr,
+  spras TYPE makt-spras,
+  maktx TYPE makt-maktx,
+  END OF ty_makt.
+
+
+*inserting values into Standard internal table
+
+*DATA: it_makt TYPE TABLE OF ty_makt,"or TYPE STANDARD TABLE OF
+*      wa_makt LIKE LINE OF it_makt.
+*
+*wa_makt-matnr = 100.
+*wa_makt-spras = 'E'.
+*wa_makt-maktx = 'Pen'.
+*APPEND wa_makt TO it_makt.
+*
+*wa_makt-matnr = 200.
+*wa_makt-spras = 'E'.
+*wa_makt-maktx = 'Pencil'.
+*APPEND wa_makt TO it_makt.
+*
+*wa_makt-matnr = 200.
+*wa_makt-spras = 'D'.
+*wa_makt-maktx = 'Pencil'.
+*APPEND wa_makt TO it_makt.
+*
+*wa_makt-matnr = 1300.
+*wa_makt-spras = 'E'.
+*wa_makt-maktx = 'Book'.
+*APPEND wa_makt TO it_makt.
+*
+*wa_makt-matnr = 5001.
+*wa_makt-spras = 'E'.
+*wa_makt-maktx = 'Pen Holder'.
+*APPEND wa_makt TO it_makt.
+
+*CLEAR wa_makt.
+*
+*******************Reading any 1 record from internal table
+*READ TABLE it_makt INTO wa_makt INDEX 4.
+*READ TABLE it_makt INTO wa_makt WITH KEY matnr = '200' spras = 'D'.
+*WRITE: / wa_makt.
+*******************Reading more than 1 record from internal table
+**LOOP AT it_makt INTO wa_makt WHERE matnr = '200'.
+**  WRITE: / wa_makt.
+**ENDLOOP.
+
+
+
+*SORT it_makt by matnr.
+**READ TABLE it_makt INTO wa_makt WITH KEY matnr = '200' spras ='E' BINARY SEARCH.
+**  WRITE :/ wa_makt.
+*  LOOP AT it_makt INTO wa_makt.
+*    WRITE :/ wa_makt-matnr,
+*            wa_makt-spras,
+*            wa_makt-maktx.
+*   ENDLOOP.
+
+*************sorted table*****************************************
+*DATA : it_makt TYPE SORTED TABLE OF ty_makt with UNIQUE KEY matnr spras,
+*       wa_makt LIKE LINE OF it_makt.
+*
+*
+*wa_makt-matnr = '400'.
+*wa_makt-spras = 'E'.
+*wa_makt-maktx = 'Book'.
+*Insert wa_makt INTO TABLE it_makt.
+*
+*wa_makt-matnr = '20'.
+*wa_makt-spras = 'D'.
+*wa_makt-maktx = 'Pen'.
+*Insert wa_makt INTO TABLE it_makt.
+*
+*wa_makt-matnr = '1000'.
+*wa_makt-spras = 'E'.
+*wa_makt-maktx = 'Pencil'.
+*INSERT wa_makt INTO TABLE it_makt.
+*
+**READ TABLE it_makt INTO wa_makt WITH KEY matnr = '200'.
+**  WRITE :/ wa_makt.
+*  LOOP AT it_makt INTO wa_makt.
+*    WRITE :/ wa_makt-matnr,
+*            wa_makt-spras,
+*            wa_makt-maktx.
+*   ENDLOOP.
+
+* ************************************Hashed Table**********************************************
+DATA : it_makt TYPE HASHED TABLE OF  ty_makt with UNIQUE KEY matnr spras,
+       wa_makt LIKE LINE OF it_makt.
+
+
+wa_makt-matnr = '400'.
+wa_makt-spras = 'E'.
+wa_makt-maktx = 'Book'.
+Insert wa_makt INTO TABLE it_makt.
+
+wa_makt-matnr = '200'.
+wa_makt-spras = 'D'.
+wa_makt-maktx = 'Pen'.
+Insert wa_makt INTO TABLE it_makt.
+
+wa_makt-matnr = '300'.
+wa_makt-spras = 'E'.
+wa_makt-maktx = 'Pencil'.
+INSERT wa_makt INTO TABLE it_makt.
+
+SORT it_makt by matnr.
+*READ TABLE it_makt INTO wa_makt WITH KEY matnr = '200'.
+*  WRITE :/ wa_makt.
+  LOOP AT it_makt INTO wa_makt.
+    WRITE :/ wa_makt-matnr,
+            wa_makt-spras,
+            wa_makt-maktx.
+   ENDLOOP.

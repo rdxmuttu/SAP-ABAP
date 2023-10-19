@@ -1,0 +1,76 @@
+REPORT ZPROGAM_DAY3_1.
+**TYPES: BEGIN OF ty_marc,
+**         matnr TYPE marc-matnr,
+**         werks TYPE marc-werks,
+**       END OF ty_marc.
+**
+**DATA: st_marc TYPE ty_marc,
+**      v_name1 TYPE T001W-name1.
+**
+**PARAMETERS p_matnr TYPE marc-matnr.
+**
+**SELECT matnr werks
+**  FROM marc
+**  INTO st_marc
+**  WHERE matnr EQ p_matnr.
+**
+**SELECT SINGLE name1
+**  FROM T001W
+**  INTO v_name1
+**  WHERE werks EQ st_marc-werks.
+**
+**WRITE: / st_marc-matnr,
+**       st_marc-werks,
+**       v_name1.
+**ENDSELECT.
+*
+*TYPES : BEGIN OF ty_marc,
+*matnr TYPE marc-matnr,
+*werks TYPE marc-werks,
+*END OF ty_marc.
+*
+*DATA st_marc TYPE ty_marc.
+*DATA v_name1 TYPE t001w-name1.
+*
+*PARAMETERS p_matnr TYPE marc-matnr.
+*
+*
+*write : / 'MATERIAL NUMBER',
+*40 'PLANT NUMBER',
+*80 'PLANT NAME'.
+*
+*
+*
+*Select matnr werks FROM marc INTO st_marc WHERE matnr EQ p_matnr.
+*SELECT SINGLE name1 FROM t001w INTO v_name1 WHERE werks EQ st_marc-werks.
+*write : / st_marc-werks,
+*40 st_marc-matnr,
+*80 v_name1.
+*
+*ENDSELECT.
+
+*========using internal table
+
+TYPES: BEGIN OF ty_marc,
+  matnr TYPE marc-matnr,
+  werks TYPE marc-werks,
+END OF ty_marc.
+
+DATA: it_marc TYPE TABLE OF ty_marc,
+      wa_marc LIKE LINE OF it_marc,
+      v_name1 TYPE t001w-name1.
+
+PARAMETERS p_matnr TYPE marc-matnr.
+
+WRITE : / 'MATERIAL NUMBER',
+        40 'PLANT NUMBER',
+        80 'PLANT NAME'.
+
+SELECT matnr werks FROM marc INTO TABLE it_marc WHERE matnr = p_matnr.
+
+LOOP AT it_marc INTO wa_marc.
+  SELECT SINGLE name1 FROM t001w INTO v_name1 WHERE werks = wa_marc-werks.
+  WRITE : / wa_marc-werks,
+          40 wa_marc-matnr,
+          80 v_name1.
+ENDLOOP.

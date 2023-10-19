@@ -1,0 +1,19 @@
+REPORT ZPROGRAM_DAY3.
+TYPES: BEGIN OF ty_marc,
+         matnr TYPE marc-matnr,
+         werks TYPE marc-werks,
+       END OF ty_marc.
+
+DATA: st_marc TYPE ty_marc.
+
+PARAMETERS p_matnr TYPE marc-matnr.
+
+SELECT matnr werks
+  FROM marc
+  INTO st_marc
+  WHERE matnr EQ p_matnr.
+
+WRITE: st_marc-matnr,
+       st_marc-werks.
+
+ENDSELECT.
