@@ -19,24 +19,36 @@ REPORT ZPROGRAM1.
 *WRITE   v_name.
 
 
-*DATA:
-*  lv_char TYPE c LENGTH 10 VALUE 'Hello',             " Character/String
-*  lv_num TYPE n LENGTH 5 VALUE '12345',               " Numeric
-*  lv_date TYPE d  VALUE '20231010',                    " Date
-*  lv_time TYPE t  VALUE '1245',                       " Time
-*  lv_xstr TYPE x LENGTH 4 VALUE '1A2B3C4D',           " Hexadecimal
-*  lv_int TYPE i VALUE 42,                             " Integer
-*  lv_float TYPE f VALUE '123.45',                     " Floating Point
-*  lv_pck TYPE p LENGTH 4 DECIMALS 2 VALUE '123.45'.   " Packed Number
-*
-*WRITE: / 'Character: ', lv_char,
-*        / 'Numeric: ', lv_num,
-*        / 'Date: ', lv_date,
-*        / 'Time: ', lv_time,
-*        / 'Hexadecimal: ', lv_xstr,
-*        / 'Integer: ', lv_int,
-*        / 'Floating Point: ', lv_float,
-*        / 'Packed Number: ', lv_pck.
+*REPORT z_sample_abap_program.
+
+DATA:
+*==================Non Numeric types================= 
+  lv_char TYPE c LENGTH 10 VALUE 'Hello',           " Character/String
+  lv_num TYPE n LENGTH 5 VALUE '12345',             " Numeric
+  lv_date TYPE d VALUE '20231010',                 " Date
+  lv_time TYPE t VALUE '1245',                     " Time (HHMM format)
+  lv_xstr TYPE x LENGTH 4 VALUE '1A2B3C4D',         " Hexadecimal
+*==================Numeric types======================
+  lv_int TYPE i VALUE 42,                           " Integer
+  lv_float TYPE f VALUE '123.45',                  " Floating Point
+  lv_pck TYPE p LENGTH 4 DECIMALS 2 VALUE '123.45', " Packed Number
+  lv_decfloat TYPE decfloat16 VALUE '12345.6789'.   " Decfloat
+
+WRITE: / 'Non Numeric types '
+
+	/ 'Character: ', lv_char,
+        / 'Numeric: ', lv_num,
+        / 'Date: ', lv_date,
+        / 'Time: ', lv_time,
+        / 'Hexadecimal: ', lv_xstr,
+        
+	/ 'Non Numeric types '
+
+        / 'Integer: ', lv_int,
+        / 'Floating Point: ', lv_float,
+	/ 'Packed Number: ', lv_pck,
+        / 'Decfloat: ', lv_decfloat.
+
 
 *DATA : v_date TYPE d,"c LENGTH 8,
 *       v_out TYPE c LENGTH 10.
@@ -48,5 +60,5 @@ REPORT ZPROGRAM1.
 *      v_fname TYPE ty_name,
 *      v_mname TYPE ty_name.
 DATA V1 TYPE ZTY_EBIN2.
-V1 = 'GHSGJHFJSDH'.
+V1 = 'Global type'.
 WRITE V1.

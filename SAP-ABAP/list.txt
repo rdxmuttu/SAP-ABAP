@@ -1,0 +1,29 @@
+REPORT ZEBIN_LIST.
+
+DATA : it_makt TYPE STANDARD TABLE OF makt,
+       wa_makt LIKE LINE OF it_makt.
+DATA v_matnr TYPE matnr.
+
+SELECT-OPTIONS s_matnr FOR wa_makt-matnr.
+
+START-OF-SELECTION.
+
+select * from makt into table it_makt where matnr IN s_matnr.
+
+END-OF-SELECTION.
+
+  LOOP AT it_makt INTO wa_makt.
+
+    WRITE : / wa_makt-matnr, wa_makt-spras, wa_makt-maktx.
+
+  ENDLOOP.
+
+
+
+  AT LINE-SELECTION.
+
+    GET CURSOR VALUE v_matnr.
+
+    SET PARAMETER ID 'MAT' FIELD v_matnr.
+
+    CALL TRANSACTION 'MM03'.

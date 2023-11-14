@@ -1,0 +1,14 @@
+REPORT zebin_procedure_call.
+*PERFORM display IN PROGRAM ZEBIN_PROCEDURE."only display form statements gets executed
+*SUBMIT ZEBIN_PROCEDURE."the whole program gets executed
+
+DATA v_date TYPE sy-datum.
+v_date = sy-datum.
+WRITE v_date.
+
+AT LINE-SELECTION.
+  EXPORT v_date TO MEMORY ID 'ebin'.
+
+  SET PARAMETER ID 'ebin' FIELD v_date.
+SUBMIT ZEBIN_PROCEDURE AND RETURN.
+WRITE 'end'.

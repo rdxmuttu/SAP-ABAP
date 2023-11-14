@@ -1,0 +1,94 @@
+REPORT ZEBIN_OOP_EVENTS.
+CLASS lcl_event_handler DEFINITION.
+  PUBLIC SECTION.
+  METHODS catch_double_click FOR EVENT RAISE_DOUBLE_CLICK OF ZCL_ebin_EVENTS.
+ENDCLASS.
+CLASS lcl_event_handler IMPLEMENTATION.
+  METHOD catch_double_click.
+    CALL TRANSACTION 'MM03'.
+  ENDMETHOD.
+ENDCLASS.
+
+DATA o_emp TYPE REF TO ZCL_ebin_EVENTS.
+DATA o_events TYPE REF TO lcl_event_handler."local event
+*DATA o_events TYPE REF TO zcl_ebin_event1."global event
+START-OF-SELECTION.
+
+CREATE OBJECT o_emp.
+CREATE OBJECT o_events.
+
+SET HANDLER o_events->catch_double_click FOR o_emp.
+*SET HANDLER o_events->emp_name FOR o_emp."for global
+o_emp->double_click( ).
+
+write 'end'.
+
+
+*======================================
+
+
+class ZCL_EBIN_EVENTS definition
+  public
+  create public .
+
+public section.
+
+  events RAISE_DOUBLE_CLICK .
+
+  methods GET_SALARY .
+  methods DOUBLE_CLICK .
+protected section.
+private section.
+ENDCLASS.
+
+
+
+CLASS ZCL_EBIN_EVENTS IMPLEMENTATION.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_EBIN_EVENTS->DOUBLE_CLICK
+* +-------------------------------------------------------------------------------------------------+
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method DOUBLE_CLICK.
+    RAISE EVENT RAISE_DOUBLE_CLICK.
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_EBIN_EVENTS->GET_SALARY
+* +-------------------------------------------------------------------------------------------------+
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method GET_SALARY.
+  endmethod.
+ENDCLASS.
+
+*================================================
+
+
+
+class ZCL_EBIN_EVENT1 definition
+  public
+  create public .
+
+public section.
+
+  methods EMP_NAME
+    for event RAISE_DOUBLE_CLICK of ZCL_EBIN_EVENTS .
+protected section.
+private section.
+ENDCLASS.
+
+
+
+CLASS ZCL_EBIN_EVENT1 IMPLEMENTATION.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_EBIN_EVENT1->EMP_NAME
+* +-------------------------------------------------------------------------------------------------+
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method EMP_NAME.
+    WRITE : 'EVENT CALLED'.
+  endmethod.
+ENDCLASS.

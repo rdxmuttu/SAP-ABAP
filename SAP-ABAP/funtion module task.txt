@@ -1,0 +1,200 @@
+
+*&---------------------------------------------------------------------*
+
+*& Report ZEBIN_FM_TASK
+
+*&---------------------------------------------------------------------*
+
+*&
+
+*&---------------------------------------------------------------------*
+
+REPORT zebin_fm_task.
+
+DATA : it_vbak   TYPE zebin_t_vbak,
+
+       wa_vbak   LIKE LINE OF it_vbak,
+
+       it_item   TYPE zebin_t_item,
+
+       it_header TYPE zebin_t_header.
+ 
+ 
+SELECT-OPTIONS s_num FOR wa_vbak-vbeln.
+ 
+START-OF-SELECTION.
+
+  CALL FUNCTION 'ZEBIN_FM_HEADER'
+
+    EXPORTING
+
+      im_vbeln = s_num[]
+
+    IMPORTING
+
+      e_header = it_header.
+ 
+END-OF-SELECTION.
+
+  CALL FUNCTION 'ZEBIN_FM_WRITE'
+
+    EXPORTING
+
+      it_item_details   = it_item
+
+      it_header_details = it_header
+
+      flag              = 'H'. " Pass 'I' to indicate item data
+ 
+AT LINE-SELECTION.
+ 
+  DATA : fnam(20),fval(50).
+
+  DATA v_vbeln TYPE vbap-vbeln.
+
+  GET CURSOR FIELD fnam VALUE fval.
+ 
+  CALL FUNCTION 'CONVERSION_EXIT_ALPHA_INPUT'
+
+    EXPORTING
+
+      input  = fval
+
+    IMPORTING
+
+      output = v_vbeln.
+ 
+  CLEAR it_item.
+
+  CALL FUNCTION 'ZEBIN_FM_ITEM'
+
+    EXPORTING
+
+      im_v_vbeln = v_vbeln
+
+    IMPORTING
+
+      e_item     = it_item.
+ 
+  CALL FUNCTION 'ZEBIN_FM_WRITE'
+
+    EXPORTING
+
+      it_item_details   = it_item
+
+      it_header_details = it_header
+
+      flag              = 'I'.
+
+*==================================================
+FUNCTION ZEBIN_FM_WRITE.
+*"----------------------------------------------------------------------
+*"*"Local Interface:
+*"  IMPORTING
+*"     REFERENCE(IT_ITEM_DETAILS) TYPE  ZEBIN_T_ITEM OPTIONAL
+*"     REFERENCE(IT_HEADER_DETAILS) TYPE  ZEBIN_T_HEADER OPTIONAL
+*"     VALUE(FLAG) TYPE  C OPTIONAL
+*"----------------------------------------------------------------------
+DATA: wa_item_details LIKE LINE OF it_item_details,
+        wa_header_details LIKE LINE OF it_header_details.
+ 
+  IF flag = 'I'.
+    LOOP AT it_item_details INTO wa_item_details.
+      AT FIRST.
+        WRITE: / 'Item', 20 'Material', 35 'ItemDesc', 60 'Order Qty',
+                80 'UoM', 100 'NetVal'.
+      ENDAT.
+ 
+      WRITE: /
+             wa_item_details-posnr,
+             20 wa_item_details-pstyv,
+             35 wa_item_details-arktx,
+             50 wa_item_details-kwmeng,
+             80 wa_item_details-msehl,
+             90 wa_item_details-netwr.
+    ENDLOOP.
+  ELSEIF flag = 'H'.
+    LOOP AT it_header_details INTO wa_header_details.
+      AT FIRST.
+        WRITE: /20 'Document Number', 40 'Doc Date', 61 'Net Val', 90 'Sold To Party'.
+      ENDAT.
+ 
+      WRITE: /20 wa_header_details-vbeln,
+             40 wa_header_details-audat,
+             51 wa_header_details-netwr,
+             90 wa_header_details-name1.
+    ENDLOOP.
+  ENDIF.
+ 
+ 
+ENDFUNCTION.
+*=============================================
+FUNCTION ZEBIN_FM_WRITE.
+*"----------------------------------------------------------------------
+*"*"Local Interface:
+*"  IMPORTING
+*"     REFERENCE(IT_ITEM_DETAILS) TYPE  ZEBIN_T_ITEM OPTIONAL
+*"     REFERENCE(IT_HEADER_DETAILS) TYPE  ZEBIN_T_HEADER OPTIONAL
+*"     VALUE(FLAG) TYPE  C OPTIONAL
+*"----------------------------------------------------------------------
+DATA: wa_item_details LIKE LINE OF it_item_details,
+        wa_header_details LIKE LINE OF it_header_details.
+ 
+  IF flag = 'I'.
+    LOOP AT it_item_details INTO wa_item_details.
+      AT FIRST.
+        WRITE: / 'Item', 20 'Material', 35 'ItemDesc', 60 'Order Qty',
+                80 'UoM', 100 'NetVal'.
+      ENDAT.
+ 
+      WRITE: /
+             wa_item_details-posnr,
+             20 wa_item_details-pstyv,
+             35 wa_item_details-arktx,
+             50 wa_item_details-kwmeng,
+             80 wa_item_details-msehl,
+             90 wa_item_details-netwr.
+    ENDLOOP.
+  ELSEIF flag = 'H'.
+    LOOP AT it_header_details INTO wa_header_details.
+      AT FIRST.
+        WRITE: /20 'Document Number', 40 'Doc Date', 61 'Net Val', 90 'Sold To Party'.
+      ENDAT.
+ 
+      WRITE: /20 wa_header_details-vbeln,
+             40 wa_header_details-audat,
+             51 wa_header_details-netwr,
+             90 wa_header_details-name1.
+    ENDLOOP.
+  ENDIF.
+ 
+ 
+ENDFUNCTION.
+*=====================================
+FUNCTION ZEBIN_FM_ITEM.
+*"----------------------------------------------------------------------
+*"*"Local Interface:
+*"  IMPORTING
+*"     REFERENCE(IM_V_VBELN) TYPE  VBAK-VBELN
+*"  EXPORTING
+*"     REFERENCE(E_ITEM) TYPE  ZEBIN_T_ITEM
+*"----------------------------------------------------------------------
+DATA : it_vbap TYPE  zebin_t_vbap,
+        wa_vbap LIKE LINE OF it_vbap.
+
+  DATA : it_t006a TYPE  zebin_t_t006a,
+        wa_t006a LIKE LINE OF it_t006a.
+  DATA : it_item TYPE zebin_t_item,
+        wa_item LIKE LINE OF it_item.
+  SELECT vbeln posnr pstyv arktx kwmeng zieme netwr from vbap into table it_vbap where vbeln eq im_v_vbeln.
+SELECT msehi msehl from t006a into table it_t006a FOR ALL ENTRIES IN it_vbap where msehi eq it_vbap-zieme and spras eq sy-langu.
+  LOOP at it_vbap into wa_vbap.
+    READ TABLE it_t006a into wa_t006a with key msehi = wa_vbap-zieme.
+MOVE-CORRESPONDING wa_vbap TO wa_item.
+MOVE-CORRESPONDING wa_t006a TO wa_item.
+APPEND wa_item TO e_item.
+CLEAR wa_item.
+  ENDLOOP.
+
+
+ENDFUNCTION.

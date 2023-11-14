@@ -1,0 +1,31 @@
+REPORT ZEBIN_PROCESSING_BLOCKS.
+DATA v_maktx type maktx.
+PARAMETERS : p_matnr TYPE matnr DEFAULT 'MN100',
+            p_date TYPE sy-datum,
+            p_set1 as CHECKBOX.
+
+START-OF-SELECTION.
+
+DATA v_name TYPE c LENGTH 10.
+ select SINGLE maktx FROM makt into v_maktx WHERE matnr eq p_matnr.
+   PERFORM show_output.
+
+   AT LINE-SELECTION.
+     WRITE 'secondary list'.
+     call SELECTION-SCREEN 1000.
+   form show_output.
+
+     v_name = 'Ebin'.
+     WRITE v_name.
+     ENDFORM.
+     FORM display.
+       v_name = 'ebin'.
+       ENDFORM.
+     At SELECTION-SCREEN OUTPUT.
+       p_date = sy-datum.
+       LOOP AT SCREEN.
+         if screen-name = 'P_SETL'.
+           screen-input = 0.
+           MODIFY SCREEN.
+           ENDIF.
+           ENDLOOP.

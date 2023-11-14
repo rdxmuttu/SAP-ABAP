@@ -1,0 +1,104 @@
+REPORT zebin_oop_inheritance_1.
+DATA : o_bus TYPE REF TO ZCL_ebin_BUS.
+DATA o_truck TYPE REF TO ZCL_ebin_truck.
+DATA o_acc TYPE REF TO ZCL_ebin_ACCOUNT.
+CREATE OBJECT : o_acc, o_bus, o_truck.
+
+o_acc->calculate_fuel_cost( ovehicle = o_truck ).
+o_acc->calculate_fuel_cost( ovehicle = o_bus ).
+
+WRITE 'end'.
+
+*===========================================
+class ZCL_EBIN_BUS definition
+  public
+  create public .
+
+public section.
+
+  interfaces ZIF_EBIN_VEHICLE .
+
+  aliases REG_NO
+    for ZIF_EBIN_VEHICLE~REG_NO .
+  aliases GET_MILEAGE
+    for ZIF_EBIN_VEHICLE~GET_MILEAGE .
+protected section.
+private section.
+ENDCLASS.
+
+
+
+CLASS ZCL_EBIN_BUS IMPLEMENTATION.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_EBIN_BUS->ZIF_EBIN_VEHICLE~GET_MILEAGE
+* +-------------------------------------------------------------------------------------------------+
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method ZIF_EBIN_VEHICLE~GET_MILEAGE.
+    "tHIS IS BUS CLASS
+  endmethod.
+ENDCLASS.
+
+
+*====================================================
+class ZCL_EBIN_TRUCK definition
+  public
+  create public .
+
+public section.
+
+  interfaces ZIF_EBIN_VEHICLE .
+
+  aliases REG_NO
+    for ZIF_EBIN_VEHICLE~REG_NO .
+  aliases GET_MILEAGE
+    for ZIF_EBIN_VEHICLE~GET_MILEAGE .
+protected section.
+private section.
+ENDCLASS.
+
+
+
+CLASS ZCL_EBIN_TRUCK IMPLEMENTATION.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_EBIN_TRUCK->ZIF_EBIN_VEHICLE~GET_MILEAGE
+* +-------------------------------------------------------------------------------------------------+
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method ZIF_EBIN_VEHICLE~GET_MILEAGE.
+    "This is truck
+  endmethod.
+ENDCLASS.
+
+
+*============================================================
+
+class ZCL_EBIN_ACCOUNT definition
+  public
+  create public .
+
+public section.
+
+  methods CALCULATE_FUEL_COST
+    importing
+      !OVEHICLE type ref to ZIF_EBIN_VEHICLE .
+protected section.
+private section.
+ENDCLASS.
+
+
+
+CLASS ZCL_EBIN_ACCOUNT IMPLEMENTATION.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_EBIN_ACCOUNT->CALCULATE_FUEL_COST
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] OVEHICLE                       TYPE REF TO ZIF_EBIN_VEHICLE
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method CALCULATE_FUEL_COST.
+    ovehicle->get_mileage( ).
+  endmethod.
+ENDCLASS.

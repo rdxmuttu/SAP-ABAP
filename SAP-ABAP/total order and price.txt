@@ -56,8 +56,8 @@ SELECT-OPTIONS s_num FOR wa_vbak-vbeln.
 
 SELECT  vbeln audat netwr kunnr FROM vbak INTO TABLE it_vbak WHERE vbeln IN s_num.
 SELECT  kunnr name1 FROM kna1 INTO TABLE it_kna1 FOR ALL ENTRIES IN it_vbak WHERE kunnr EQ it_vbak-kunnr.
-SELECT  vbeln posnr pstyv arktx kwmeng zieme netwr FROM vbap INTO TABLE it_vbap WHERE vbeln in s_num.
-SELECT msehi msehl FROM t006a INTO TABLE it_t006a FOR ALL ENTRIES IN it_vbap where spras Eq sy-langu AND msehi EQ it_vbap-zieme.
+SELECT  vbeln posnr pstyv arktx kwmeng zieme netwr FROM vbap INTO TABLE it_vbap WHERE vbeln IN s_num.
+SELECT msehi msehl FROM t006a INTO TABLE it_t006a FOR ALL ENTRIES IN it_vbap where spras EQ sy-langu AND msehi EQ it_vbap-zieme.
   LOOP AT it_vbap INTO wa_vbap.
       AT new vbeln.
 *      IF wa_vbap-vbeln NE prevbeln.

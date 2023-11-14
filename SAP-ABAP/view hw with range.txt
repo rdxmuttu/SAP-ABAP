@@ -1,0 +1,90 @@
+REPORT ZEBIN_VIEW_HW.
+*DATA: it_plant TYPE STANDARD TABLE OF ZEBIN_VIEW1,
+*      wa_plant LIKE LINE OF it_plant.
+*
+*DATA: plant_range TYPE RANGE OF ZEBIN_VIEW1-matnr,
+*      selected_plants TYPE TABLE OF ZEBIN_VIEW1,
+*      s_selected TYPE TABLE OF ZEBIN_VIEW1.
+*
+*SELECT-OPTIONS s_matnr FOR ZEBIN_VIEW1-matnr.
+*
+** Define a dynamic selection for plant numbers
+*LOOP AT s_matnr.
+*  SELECT * FROM ZEBIN_VIEW1 INTO TABLE @it_plant WHERE matnr EQ s_matnr-low.
+*ENDLOOP.
+*
+*LOOP AT it_plant INTO wa_plant.
+*  LOOP AT s_matnr WHERE LOW <= wa_plant-matnr AND HIGH >= wa_plant-matnr.
+*    APPEND wa_plant TO selected_plants.
+*  ENDLOOP.
+*ENDLOOP.
+*
+*LOOP AT selected_plants INTO wa_plant.
+*  s_selected-low = wa_plant-werks. " Add the plant names you want to select
+*  APPEND s_selected TO s_selected.
+*ENDLOOP.
+*
+** Display checkboxes for plant names
+*LOOP AT s_selected.
+*  LOOP AT it_plant WHERE werks = s_selected-low.
+*    WRITE: / s_selected-low AS CHECKBOX,
+*            wa_plant-matnr,
+*            wa_plant-werks,
+*            wa_plant-name1.
+*  ENDLOOP.
+*ENDLOOP.
+
+*------------------------------------------------------------------------------
+*DATA : it_plant TYPE STANDARD TABLE OF ZKIR_VIEW1,
+*       wa_plant LIKE LINE OF it_plant.
+*
+*data : IT_CK_PLANT TYPE STANDARD TABLE OF ZKIR_PLANT,
+*       WA_CK_PLANT LIKE LINE OF IT_CK_PLANT.
+*
+*SELECT-OPTIONS s_matnr FOR wa_plant-matnr.
+**PARAMETERS p_werks TYPE werks_d.
+*SELECT * FROM ZKIR_VIEW1 INTO TABLE it_plant WHERE matnr IN s_matnr.
+*SELECT * FROM ZKIR_PLANT INTO TABLE IT_CK_PLANT.
+*
+*LOOP AT it_plant INTO wa_plant.
+**  READ TABLE IT_CK_PLANT INTO WA_CK_PLANT WITH KEY WERKS = wa_plant-WERKS.
+*  IF SY-SUBRC IS INITIAL.
+*    FORMAT COLOR COL_POSITIVE.
+*  ENDIF.
+*
+*WRITE : / wa_plant-matnr, 40 wa_plant-werks, 120 wa_plant-name1.
+*    FORMAT COLOR OFF.
+*ENDLOOP.
+*------------------------------------------------------------------------------
+
+TYPES : BEGIN OF ty_range,
+       sign TYPE  c length 1,
+       opti type c length 2,
+  low type werks_d,
+  high type werks_d,
+  END OF ty_range.
+DATA : it_marc TYPE STANDARD TABLE OF  zneeth_view ,
+       wa_marc LIKE LINE OF it_marc.
+DATA : it_plant type STANDARD TABLE OF zneethu_plant,
+      wa_plant LIKE LINE OF it_plant.
+DATA:
+       prev_low TYPE zneethu_plant-low,
+      prev_high TYPE zneethu_plant-high.
+DATA: it_range type table of ty_range.
+
+ SELECT-OPTIONS S_NUM FOR wa_marc-matnr.
+
+ SELECT * FROM zneeth_view INTO TABLE  it_marc WHERE matnr IN s_num.
+SELECT sign opti low high from zneethu_plant into table it_range where name eq 'CHECK_PLAN'.
+
+  LOOP AT it_marc INTO wa_marc.
+
+ IF wa_marc-werks IN it_range.
+  FORMAT COLOR COL_POSITIVE.
+ ENDIF.
+WRITE : / wa_marc-matnr,
+              wa_marc-werks,
+              wa_marc-name1.
+
+ FORMAT COLOR OFF.
+ENDLOOP.

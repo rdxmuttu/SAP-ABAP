@@ -1,0 +1,24 @@
+*&---------------------------------------------------------------------*
+*& Report ZEBIN_ENHANCEMENT
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT zebin_enhancement.
+
+PARAMETERS : p_1 TYPE i,
+             p_2 TYPE i.
+
+DATA v_result TYPE i.
+*v_result = p_1 + p_2.
+
+PERFORM process_data.
+
+WRITE v_result.
+
+INCLUDE zebin_include_enhancement.
+*&---------------------------------------------------------------------*
+*& Include ZEBIN_INCLUDE_ENHANCEMENT
+*&---------------------------------------------------------------------*
+FORM process_data.
+  v_result = p_1 * p_2.
+ENDFORM.

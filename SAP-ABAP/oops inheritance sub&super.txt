@@ -1,0 +1,93 @@
+*&---------------------------------------------------------------------*
+*& Report ZEBIN_OOP_INHERITANCE
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT ZEBIN_OOP_INHERITANCE.
+DATA : o_super TYPE REF TO ZCL_EBIN_SUPER,
+       o_sub TYPE REF TO ZEBIN_CL_SUB.
+
+CREATE OBJECT : o_super, o_sub.
+
+o_super->get_mileage( ).
+o_sub->get_mileage( ).
+o_sub->get_seat( )."
+
+*o_sub = o_super."wont run according to rule
+o_super = o_sub.
+o_super->get_mileage( ).
+o_sub ?= o_super."will work as both are made same type now
+
+WRITE 'end'.
+
+
+*==============================================
+class ZCL_EBIN_SUPER definition
+  public
+  create public .
+
+public section.
+
+  data REG_NO type CHAR10 .
+
+  methods GET_MILEAGE .
+protected section.
+private section.
+ENDCLASS.
+
+
+
+CLASS ZCL_EBIN_SUPER IMPLEMENTATION.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_EBIN_SUPER->GET_MILEAGE
+* +-------------------------------------------------------------------------------------------------+
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method GET_MILEAGE.
+    "This is super class
+  endmethod.
+ENDCLASS.
+
+
+*===========================================
+
+class ZEBIN_CL_SUB definition
+  public
+  inheriting from ZCL_EBIN_SUPER
+  create public .
+
+public section.
+
+  methods GET_SEAT .
+
+  methods GET_MILEAGE
+    redefinition .
+protected section.
+private section.
+ENDCLASS.
+
+
+
+CLASS ZEBIN_CL_SUB IMPLEMENTATION.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZEBIN_CL_SUB->GET_MILEAGE
+* +-------------------------------------------------------------------------------------------------+
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method GET_MILEAGE.
+*CALL METHOD SUPER->GET_MILEAGE
+*    .
+    "This is subclass implementation
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZEBIN_CL_SUB->GET_SEAT
+* +-------------------------------------------------------------------------------------------------+
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method GET_SEAT.
+    "This is sub class
+  endmethod.
+ENDCLASS.

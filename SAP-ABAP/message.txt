@@ -1,0 +1,17 @@
+REPORT ZEBIN_MESSAGES." MESSAGE-ID zebin_msg.
+DATA : it_makt TYPE STANDARD TABLE OF makt,
+       wa_makt LIKE LINE OF it_makt.
+
+PARAMETERS p_matnr TYPE makt-matnr.
+
+AT SELECTION-SCREEN.
+SELECT * FROM makt INTO TABLE it_makt WHERE matnr EQ p_matnr.
+IF sy-subrc IS NOT INITIAL.
+  MESSAGE e000(zebin_msg) with p_matnr.
+*  MESSAGE 'please enter valid comment ' TYPE 'E'.
+*  MESSAGE text-001 TYPE 'E'. "I - Information, W - Warning, E- Error, S - Status, A - Abandon, X - Short dump
+ENDIF. "text-000 is used to display same language as login
+START-OF-SELECTION.
+LOOP AT it_makt into wa_makt.
+WRITE : / wa_makt-matnr, wa_makt-spras, wa_makt-maktx.
+ENDLOOP.
