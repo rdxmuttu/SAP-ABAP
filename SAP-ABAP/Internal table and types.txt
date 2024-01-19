@@ -20,7 +20,7 @@ TYPES : BEGIN OF ty_makt,
 *wa_makt-matnr = 100.
 *wa_makt-spras = 'E'.
 *wa_makt-maktx = 'Pen'.
-*APPEND wa_makt TO it_makt.
+*APPEND wa_makt TO it_makt."values inserted at end of table
 *
 *wa_makt-matnr = 200.
 *wa_makt-spras = 'E'.
@@ -56,7 +56,7 @@ TYPES : BEGIN OF ty_makt,
 
 
 *SORT it_makt by matnr.
-**READ TABLE it_makt INTO wa_makt WITH KEY matnr = '200' spras ='E' BINARY SEARCH.
+**READ TABLE it_makt INTO wa_makt WITH KEY matnr = '200' spras ='E' BINARY SEARCH."default linear search used
 **  WRITE :/ wa_makt.
 *  LOOP AT it_makt INTO wa_makt.
 *    WRITE :/ wa_makt-matnr,

@@ -1,10 +1,16 @@
+*&---------------------------------------------------------------------*
+*& Report ZPROGAM_DAY4_VALUATION
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT ZPROGAM_DAY4_VALUATION.
 DATA V_TOTAL TYPE P.
 PARAMETER P_AMOUNT TYPE P.
 PARAMETER P_PROFIT_PERCENT TYPE P.
 PARAMETER P_DAYS TYPE I.
 PARAMETER BOX AS CHECKBOX.
 V_TOTAL = 1.
-IF BOX EQ 'X'.
+IF BOX EQ 'X'."checked -simple interest
   V_TOTAL = P_AMOUNT * P_DAYS * (1 + (P_PROFIT_PERCENT / 100)).
 ELSE.
   V_TOTAL = P_AMOUNT.

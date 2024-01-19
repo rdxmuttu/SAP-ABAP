@@ -16,3 +16,7 @@ country = p_ctry.
 CALL BADI o_badi->calculate_gst.
 
 WRITE 'END'.
+=========================================
+method ZIF_EBIN_BADI~CALCULATE_GST.
+    write / :'THIS IS FOR INDIA'.
+  endmethod.

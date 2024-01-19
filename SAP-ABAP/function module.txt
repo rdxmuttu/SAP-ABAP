@@ -30,7 +30,7 @@ ENDIF.
 WRITE : st_makt-matnr, st_makt-spras, st_makt-maktx.
 *===========================================
 FUNCTION ZEBIN_FM.
-*"----------------------------------------------------------------------
+*"---------------------------------------------------------------------
 *"*"Local Interface:
 *"  IMPORTING
 *"     REFERENCE(IM_MATNR) TYPE  MAKT-MATNR
@@ -38,7 +38,7 @@ FUNCTION ZEBIN_FM.
 *"     REFERENCE(EX_MAKT) TYPE  MAKT
 *"  EXCEPTIONS
 *"      INVALID_MATERIAL
-*"----------------------------------------------------------------------
+*"---------------------------------------------------------------------
 SELECT SINGLE * FROM makt INTO ex_makt WHERE matnr EQ im_matnr.
   IF sy-subrc IS NOT INITIAL.
     RAISE INVALID_MATERIAL.

@@ -1,35 +1,39 @@
-REPORT ZEBIN_SUBROUTINES.
+*&---------------------------------------------------------------------*
+*& Report ZEBIN_SUBROUTINES
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT zebin_subroutines.
 *PERFORM display.
 *FORM display.
 *  WRITE 'Subroutine called'.
 *ENDFORM.
 TYPES : BEGIN OF ty_makt,
-      matnr TYPE makt-matnr,
-      spras TYPE makt-spras,
-      maktx TYPE makt-maktx,
-  END OF ty_makt.
+          matnr TYPE makt-matnr,
+          spras TYPE makt-spras,
+          maktx TYPE makt-maktx,
+        END OF ty_makt.
 
 
 TYPES ty_t_makt TYPE STANDARD TABLE OF ty_makt.
 DATA :st_makt TYPE ty_makt.
-      DATA it_makt TYPE STANDARD TABLE OF ty_makt.
+DATA it_makt TYPE STANDARD TABLE OF ty_makt.
 
 DATA : v_matnr TYPE makt-matnr,
-      v_spras TYPE makt-spras,
-      v_maktx TYPE makt-maktx.
+       v_spras TYPE makt-spras,
+       v_maktx TYPE makt-maktx.
 
 
 v_matnr = '000000000000000056'.
 v_spras = 'E'.
 
-*PERFORM display IN PROGRAM Zprocessing_blocks.
-
-PERFORM get_data USING v_matnr v_spras CHANGING v_maktx st_makt it_makt.
-
-
+*PERFORM display IN PROGRAM Zprocessing_blocks."external subroutines
+"internal Subroutine
+*PERFORM get_data USING v_matnr v_spras CHANGING v_maktx st_makt it_makt."actual parameters
+PERFORM data_display USING v_matnr v_spras CHANGING v_maktx st_makt it_makt.
 
 *write 'Subroutine called'.
-write / v_maktx.
+*WRITE / v_maktx.
 *&---------------------------------------------------------------------*
 *& Form get_data
 *&---------------------------------------------------------------------*
@@ -41,8 +45,8 @@ write / v_maktx.
 
 
 
-* Pass by reference
-*FORM get_data using p_v_matnr TYPE makt-matnr
+** Pass by reference "change original data
+*FORM get_data using p_v_matnr TYPE makt-matnr "formal parameters
 *                    p_v_spras TYPE makt-spras
 *            CHANGING p_v_maktx TYPE makt-maktx.
 *select single maktx from makt into p_v_maktx where matnr eq p_v_matnr and spras eq p_v_spras.
@@ -50,7 +54,7 @@ write / v_maktx.
 
 
 
-* Pass by value
+** Pass by value "val
 *FORM get_data USING VALUE(p_v_matnr) TYPE makt-matnr
 *                    VALUE(p_v_spras) TYPE makt-spras
 *                    CHANGING p_v_maktx TYPE makt-maktx.
@@ -61,15 +65,37 @@ write / v_maktx.
 
 
 
-* Pass by value and result
-FORM get_data USING VALUE(p_v_matnr) TYPE makt-matnr
-                    VALUE(p_v_spras) TYPE makt-spras
-              CHANGING VALUE(p_v_maktx) TYPE makt-maktx
-                         p_st_makt TYPE ty_makt
-                         p_it_makt TYPE ty_t_makt.
-select single maktx from makt into p_v_maktx where matnr eq p_v_matnr and spras eq p_v_spras.
-  select single matnr spras maktx from makt into p_st_makt WHERE matnr eq p_v_matnr.
-     select  matnr spras maktx from makt into table p_it_makt WHERE matnr eq p_v_matnr.
-    WRITE p_st_makt-matnr.
-  p_v_spras = 'D'.
+* Pass by value and result "value change when exit the subroutine
+*FORM get_data USING VALUE(p_v_matnr) TYPE makt-matnr
+*                    VALUE(p_v_spras) TYPE makt-spras
+*              CHANGING VALUE(p_v_maktx) TYPE makt-maktx
+*                         p_st_makt TYPE ty_makt
+*                         p_it_makt TYPE ty_t_makt.
+*  SELECT SINGLE maktx FROM makt INTO p_v_maktx WHERE matnr EQ p_v_matnr AND spras EQ p_v_spras.
+*  SELECT SINGLE matnr spras maktx FROM makt INTO p_st_makt WHERE matnr EQ p_v_matnr.
+*  SELECT  matnr spras maktx FROM makt INTO TABLE p_it_makt WHERE matnr EQ p_v_matnr.
+*  WRITE p_st_makt-matnr.
+*  p_v_spras = 'D'.
+*ENDFORM.
+*&---------------------------------------------------------------------*
+*& Form data_display
+*&---------------------------------------------------------------------*
+*& text
+*&---------------------------------------------------------------------*
+*&      --> V_MATNR
+*&      --> V_SPRAS
+*&      <-- V_MAKTX
+*&      <-- ST_MAKT
+*&      <-- IT_MAKT
+*&---------------------------------------------------------------------*
+FORM data_display  USING VALUE(p_v_matnr) TYPE makt-matnr
+                         VALUE(p_v_spras) TYPE makt-spras
+                CHANGING VALUE(p_v_maktx) TYPE makt-maktx
+                                p_st_makt TYPE ty_makt
+                                p_it_makt TYPE ty_t_makt.
+
+  SELECT SINGLE maktx FROM makt INTO p_v_maktx WHERE matnr EQ p_v_matnr AND spras EQ p_v_spras.
+  SELECT SINGLE matnr spras maktx FROM makt INTO p_st_makt WHERE matnr EQ p_v_matnr.
+  SELECT matnr spras maktx FROM makt INTO TABLE p_it_makt WHERE matnr EQ p_v_matnr.
+  WRITE p_st_makt-matnr.
 ENDFORM.

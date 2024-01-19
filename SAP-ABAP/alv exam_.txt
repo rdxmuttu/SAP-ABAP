@@ -1,0 +1,276 @@
+*&---------------------------------------------------------------------*
+*& Report ZEBIN_ALV_EXAM
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT zebin_alv_exam.
+*TYPES: BEGIN OF st_marc,
+*         matnr TYPE marc-matnr,
+*         werks TYPE marc-werks,
+*       END OF st_marc.
+*DATA : it_marc TYPE STANDARD TABLE OF st_marc.
+*TYPES: BEGIN OF st_t001w,
+*         werks TYPE t001w-werks,
+*         name1 TYPE  t001w-name1,
+*       END OF st_t001w.
+*DATA : it_t001w TYPE STANDARD TABLE OF st_t001w.
+*DATA it_fcat TYPE  slis_t_fieldcat_alv.
+*DATA v_matnr TYPE makt-matnr.
+*SELECT-OPTIONS s_matnr FOR v_matnr.
+*
+*
+*START-OF-SELECTION.
+*  PERFORM get_data.
+*  PERFORM display_data.
+*
+*END-OF-SELECTION.
+**&---------------------------------------------------------------------*
+**& Form get_data
+**&---------------------------------------------------------------------*
+**& text
+**&---------------------------------------------------------------------*
+**& -->  p1        text
+**& <--  p2        text
+**&---------------------------------------------------------------------*
+*FORM get_data .
+*  SELECT matnr werks FROM marc INTO TABLE it_marc WHERE matnr IN s_matnr.
+*ENDFORM.
+*
+**&---------------------------------------------------------------------*
+**& Form display_data
+**&---------------------------------------------------------------------*
+**& text
+**&---------------------------------------------------------------------*
+**& -->  p1        text
+**& <--  p2        text
+**&---------------------------------------------------------------------*
+*FORM display_data .
+*
+*  DATA lw_fcat LIKE LINE OF it_fcat.
+*  lw_fcat-col_pos = 1. " position of the column
+*  lw_fcat-fieldname = 'MATNR'.
+*  lw_fcat-tabname = 'it_marc'.
+*  lw_fcat-seltext_m  =  'Material Number'.  " middle key word
+*  lw_fcat-edit_mask = '==ALPHA'.
+*  APPEND lw_fcat TO it_fcat.
+*
+*  lw_fcat-col_pos = 2. " position of the column
+*  lw_fcat-fieldname = 'WERKS'.
+*  lw_fcat-tabname = 'it_marc'.
+*  lw_fcat-seltext_l  =  'Plant Name'.
+*
+*  APPEND lw_fcat TO it_fcat.
+*
+*  CALL FUNCTION 'REUSE_ALV_GRID_DISPLAY'
+*    EXPORTING
+**     I_INTERFACE_CHECK       = ' '
+**     I_BYPASSING_BUFFER      = ' '
+**     I_BUFFER_ACTIVE         = ' '
+*      i_callback_program      = 'ZEBIN_ALV_EXAM'
+**     i_callback_pf_status_set = 'PF_STATUS'
+*      i_callback_user_command = 'USER_COMMAND'
+**     I_CALLBACK_TOP_OF_PAGE  = ' '
+**     I_CALLBACK_HTML_TOP_OF_PAGE       = ' '
+**     I_CALLBACK_HTML_END_OF_LIST       = ' '
+**     i_structure_name        = 'st_marc' "if used hesding will not be shown
+**     I_BACKGROUND_ID         = ' '
+**     I_GRID_TITLE            =
+**     I_GRID_SETTINGS         =
+**     IS_LAYOUT               =
+*      it_fieldcat             = it_fcat
+**     IT_EXCLUDING            =
+**     IT_SPECIAL_GROUPS       =
+**     IT_SORT                 =
+**     IT_FILTER               =
+**     IS_SEL_HIDE             =
+**     I_DEFAULT               = 'X'
+**     I_SAVE                  = ' '
+**     IS_VARIANT              =
+**     IT_EVENTS               =
+**     IT_EVENT_EXIT           =
+**     IS_PRINT                =
+**     IS_REPREP_ID            =
+**     I_SCREEN_START_COLUMN   = 0
+**     I_SCREEN_START_LINE     = 0
+**     I_SCREEN_END_COLUMN     = 0
+**     I_SCREEN_END_LINE       = 0
+**     I_HTML_HEIGHT_TOP       = 0
+**     I_HTML_HEIGHT_END       = 0
+**     IT_ALV_GRAPHICS         =
+**     IT_HYPERLINK            =
+**     IT_ADD_FIELDCAT         =
+**     IT_EXCEPT_QINFO         =
+**     IR_SALV_FULLSCREEN_ADAPTER        =
+**     O_PREVIOUS_SRAL_HANDLER =
+** IMPORTING
+**     E_EXIT_CAUSED_BY_CALLER =
+**     ES_EXIT_CAUSED_BY_USER  =
+*    TABLES
+*      t_outtab                = it_marc
+*    EXCEPTIONS
+*      program_error           = 1
+*      OTHERS                  = 2.
+*  IF sy-subrc <> 0.
+** Implement suitable error handling here
+*  ENDIF.
+*ENDFORM.
+*FORM user_command  USING r_ucomm LIKE sy-ucomm
+*                                  rs_selfield TYPE slis_selfield.
+*
+*  IF r_ucomm EQ '&IC1' AND rs_selfield-fieldname EQ 'WERKS'.
+*
+*
+*          SELECT werks name1 FROM t001w INTO TABLE it_t001w  WHERE werks EQ rs_selfield-value.
+*
+*          CLEAR it_fcat.
+*          DATA : lwa_fcat LIKE LINE OF it_fcat.
+*          lwa_fcat-col_pos = 1.
+*          lwa_fcat-fieldname = 'WERKS'.
+*          lwa_fcat-tabname = 'it_t001w'.
+*          lwa_fcat-seltext_m = 'Plant Code'.
+*
+*          APPEND lwa_fcat TO it_fcat.
+*          lwa_fcat-col_pos = 2.
+*          lwa_fcat-fieldname = 'NAME1'.
+*          lwa_fcat-tabname = 'it_t001w'.
+*          lwa_fcat-seltext_m = 'Plant Name'.
+*          lwa_fcat-outputlen = 20.
+*          APPEND lwa_fcat TO it_fcat.
+*
+*
+*          CALL FUNCTION 'REUSE_ALV_LIST_DISPLAY'
+*            EXPORTING
+**             I_INTERFACE_CHECK       = ' '
+**             I_BYPASSING_BUFFER      =
+**             I_BUFFER_ACTIVE         = ' '
+*              i_callback_program      = 'ZEBIN_ALV_EXAM'
+**             I_CALLBACK_PF_STATUS_SET       = ' '
+*              i_callback_user_command = 'USER_COMMAND'
+**             I_STRUCTURE_NAME        =
+**             IS_LAYOUT               =
+*              it_fieldcat             = it_fcat
+**             IT_EXCLUDING            =
+**             IT_SPECIAL_GROUPS       =
+**             IT_SORT                 =
+**             IT_FILTER               =
+**             IS_SEL_HIDE             =
+**             I_DEFAULT               = 'X'
+**             I_SAVE                  = ' '
+**             IS_VARIANT              =
+**             IT_EVENTS               =
+**             IT_EVENT_EXIT           =
+**             IS_PRINT                =
+**             IS_REPREP_ID            =
+**             I_SCREEN_START_COLUMN   = 0
+**             I_SCREEN_START_LINE     = 0
+**             I_SCREEN_END_COLUMN     = 0
+**             I_SCREEN_END_LINE       = 0
+**             IR_SALV_LIST_ADAPTER    =
+**             IT_EXCEPT_QINFO         =
+**             I_SUPPRESS_EMPTY_DATA   = ABAP_FALSE
+**             IO_SALV_ADAPTER         =
+**                                IMPORTING
+**             E_EXIT_CAUSED_BY_CALLER =
+**             ES_EXIT_CAUSED_BY_USER  =
+*            TABLES
+*              t_outtab                = it_t001w
+*            EXCEPTIONS
+*              program_error           = 1
+*              OTHERS                  = 2.
+*          IF sy-subrc <> 0.
+** Implement suitable error handling here
+*          ENDIF.
+*
+*
+*  ENDIF.
+*
+*ENDFORM.
+
+*****************************************************using local class
+*TYPES: BEGIN OF st_marc,
+*         matnr TYPE marc-matnr,
+*         werks TYPE marc-werks,
+*       END OF st_marc.
+*TYPES: BEGIN OF st_t001w,
+*         werks TYPE t001w-werks,
+*         name1 TYPE  t001w-name1,
+*       END OF st_t001w.
+*DATA:it_marc TYPE STANDARD TABLE OF st_marc,
+*     wa_marc LIKE LINE OF it_marc.
+*DATA:it_t001w TYPE STANDARD TABLE OF st_t001w,
+*     wa_t001w LIKE LINE OF it_t001w.
+*TABLES marc.
+
+***************************************using global class
+
+TABLES marc.
+DATA : lo_obj TYPE REF TO zcl_ebin_alv.
+DATA : it_marc  TYPE Zebin_T_MARC,
+       wa_marc  TYPE Zebin_s_MARC,
+       it_t001w TYPE Zebin_T_T001W.
+
+*********************************
+CLASS classname DEFINITION.
+  PUBLIC SECTION.
+    METHODS dc FOR EVENT double_click OF cl_salv_events_table IMPORTING row column.
+ENDCLASS.
+
+CLASS classname IMPLEMENTATION.
+  METHOD dc.
+    READ TABLE it_marc INTO wa_marc INDEX row.
+***********************
+*    SELECT werks name1 FROM t001w INTO TABLE it_t001w WHERE werks EQ wa_marc-werks."for local this line only
+
+    CALL METHOD lo_obj->get_t001w
+      EXPORTING
+        v_werks    = wa_marc-werks                " Plant
+      IMPORTING
+        i_it_t001w = it_t001w.                " tab
+
+
+***********************
+    cl_salv_table=>factory(
+*        EXPORTING
+*          list_display   = if_salv_c_bool_sap=>false " ALV Displayed in List Mode
+*          r_container    =                           " Abstract Container for GUI Controls
+*          container_name =
+      IMPORTING
+        r_salv_table   =      DATA(o_alv2)                     " Basis Class Simple ALV Tables
+      CHANGING
+        t_table        = it_t001w
+    ).
+*      CATCH cx_salv_msg. " ALV: General Error Class with Message
+    o_alv2->display( ).
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+
+  SELECT-OPTIONS s_matnr FOR marc-matnr.
+  create OBJECT lo_obj.
+***********************
+*  SELECT matnr werks FROM marc INTO TABLE it_marc WHERE matnr IN s_matnr.
+  CALL METHOD lo_obj->get_marc
+    EXPORTING
+      r_s_matnr = s_matnr[]
+    IMPORTING
+      i_it_marc = it_marc.
+
+
+**********************
+  cl_salv_table=>factory( "=>static method
+*      EXPORTING
+*        list_display   = if_salv_c_bool_sap=>false " ALV Displayed in List Mode
+*        r_container    =                           " Abstract Container for GUI Controls
+*        container_name =
+    IMPORTING
+      r_salv_table   =   DATA(o_alv1)                        " Basis Class Simple ALV Tables
+    CHANGING
+      t_table        = it_marc
+  ).
+*    CATCH cx_salv_msg. " ALV: General Error Class with Message
+  DATA obj TYPE REF TO classname.
+  CREATE OBJECT obj.
+  DATA(event) = o_alv1->get_event( ).
+  SET HANDLER obj->dc FOR event.
+  o_alv1->display( )."->instance method called using object.

@@ -1,4 +1,9 @@
-REPORT ZEBIN_VIEW_HW.
+*&---------------------------------------------------------------------*
+*& Report ZEBIN_VIEW_HW
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT zebin_view_hw.
 *DATA: it_plant TYPE STANDARD TABLE OF ZEBIN_VIEW1,
 *      wa_plant LIKE LINE OF it_plant.
 *
@@ -58,33 +63,33 @@ REPORT ZEBIN_VIEW_HW.
 *------------------------------------------------------------------------------
 
 TYPES : BEGIN OF ty_range,
-       sign TYPE  c length 1,
-       opti type c length 2,
-  low type werks_d,
-  high type werks_d,
-  END OF ty_range.
-DATA : it_marc TYPE STANDARD TABLE OF  zneeth_view ,
+          sign TYPE c LENGTH 1,
+          opti TYPE c LENGTH 2,
+          low  TYPE werks_d,
+          high TYPE werks_d,
+        END OF ty_range.
+DATA : it_marc TYPE STANDARD TABLE OF  zebin_view1,
        wa_marc LIKE LINE OF it_marc.
-DATA : it_plant type STANDARD TABLE OF zneethu_plant,
-      wa_plant LIKE LINE OF it_plant.
+*DATA : it_plant TYPE STANDARD TABLE OF zebin5_hw,
+*       wa_plant LIKE LINE OF it_plant.
 DATA:
-       prev_low TYPE zneethu_plant-low,
-      prev_high TYPE zneethu_plant-high.
-DATA: it_range type table of ty_range.
+  prev_low  TYPE zebin5_hw-low,
+  prev_high TYPE zebin5_hw-high.
+DATA: it_range TYPE TABLE OF ty_range.
 
- SELECT-OPTIONS S_NUM FOR wa_marc-matnr.
+SELECT-OPTIONS s_num FOR wa_marc-matnr.
 
- SELECT * FROM zneeth_view INTO TABLE  it_marc WHERE matnr IN s_num.
-SELECT sign opti low high from zneethu_plant into table it_range where name eq 'CHECK_PLAN'.
+SELECT * FROM zebin_view1 INTO TABLE  it_marc WHERE matnr IN s_num.
+SELECT sign opti low high FROM zebin5_hw INTO TABLE it_range WHERE name EQ 'CHECK_PLAN'.
 
-  LOOP AT it_marc INTO wa_marc.
+LOOP AT it_marc INTO wa_marc.
 
- IF wa_marc-werks IN it_range.
-  FORMAT COLOR COL_POSITIVE.
- ENDIF.
-WRITE : / wa_marc-matnr,
-              wa_marc-werks,
-              wa_marc-name1.
+  IF wa_marc-werks IN it_range.
+    FORMAT COLOR COL_POSITIVE.
+  ENDIF.
+  WRITE : / wa_marc-matnr,
+            wa_marc-werks,
+            wa_marc-name1.
 
- FORMAT COLOR OFF.
+  FORMAT COLOR OFF.
 ENDLOOP.

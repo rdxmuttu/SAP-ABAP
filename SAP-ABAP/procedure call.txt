@@ -12,3 +12,35 @@ AT LINE-SELECTION.
   SET PARAMETER ID 'ebin' FIELD v_date.
 SUBMIT ZEBIN_PROCEDURE AND RETURN.
 WRITE 'end'.
+
+========================================================================
+*&---------------------------------------------------------------------*
+*& Report ZEBIN_PROCEDURE
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT zebin_procedure.
+
+*DATA v_date TYPE sy-datum.
+**INITIALIZATION.
+*LOAD-OF-PROGRAM.
+*  v_date = sy-datum.
+*
+*START-OF-SELECTION.
+*  PERFORM display.
+**&---------------------------------------------------------------------*
+**& Form display
+**&---------------------------------------------------------------------*
+**& text
+**&---------------------------------------------------------------------*
+**& -->  p1        text
+**& <--  p2        text
+**&---------------------------------------------------------------------*
+*FORM display .
+*  WRITE v_date.
+*ENDFORM.
+
+DATA v_date TYPE sy-datum.
+IMPORT v_date FROM MEMORY ID 'ebin'.
+GET PARAMETER ID 'ebin' FIELD v_date.
+WRITE v_date.

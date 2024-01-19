@@ -1,0 +1,45 @@
+*&---------------------------------------------------------------------*
+*& Report ZEBIN_BADI_DEMO
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT zebin_badi_demo.
+DATA o_badi TYPE REF TO zbadi_tax_ebin.
+DATA v_rest TYPE i.
+PARAMETERS v_amount TYPE i.
+PARAMETERS p_ctry TYPE c LENGTH 2.
+
+GET BADI o_badi
+  FILTERS
+    cty = p_ctry.
+
+CALL BADI o_badi->get_tax
+  EXPORTING
+    v_amount = v_amount.
+
+v_rest = ( 10 * v_amount ) / 100.
+WRITE : /'Rest of world :',v_rest.
+
+
+***************ZBADI_DEMO_TAX****************
+===============Z_EBIN_IMPL_TAX2===================
+METHOD zif_ebin_tax~get_tax.
+    DATA :v_india TYPE i.
+    v_india = 18 * v_amount / 100.
+
+    WRITE :/ 'India:' , v_india.
+  ENDMETHOD.
+===============Z_EBIN_IMPL_TAX_1===================
+method ZIF_EBIN_TAX~GET_TAX.
+    data :v_us type i.
+    v_us = 20 * v_amount / 100.
+
+    write : / 'USA :' ,v_us.
+  endmethod.
+===============Z_EBIN_IMPL_TAX_3===================
+METHOD zif_ebin_tax~get_tax.
+    DATA :v_china TYPE i.
+
+    v_china = 15 * v_amount / 100.
+    WRITE :/ 'China:' , v_china.
+  ENDMETHOD.

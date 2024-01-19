@@ -303,7 +303,7 @@ CLASS cl IMPLEMENTATION.
 ENDCLASS.
 FORM display_oo_alv .
 
-
+*DATA o_alv1 TYPE REF TO cl_salv_table."not possible to create object inside cl_salv_table
   DATA o_event TYPE REF TO cl.
   CREATE OBJECT o_event.
   cl_salv_table=>factory(

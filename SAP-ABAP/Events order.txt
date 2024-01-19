@@ -1,0 +1,56 @@
+REPORT ZEVENT_EXAMPLE.
+
+DATA: gv_department TYPE string,
+      gt_employee    TYPE TABLE OF zemployee,
+      gv_total_salary TYPE i,
+      gv_page_number TYPE i VALUE 0.
+
+PARAMETERS: pv_department TYPE string.
+
+INITIALIZATION.
+  " Initialization logic if needed
+
+AT SELECTION-SCREEN OUTPUT.
+  " Modify screen elements before display
+
+AT SELECTION-SCREEN.
+  IF pv_department IS INITIAL.
+    MESSAGE 'Department cannot be blank' TYPE 'E'.
+  ENDIF.
+
+AT SELECTION-SCREEN ON FIELD pv_department.
+  " Validation or modification specific to pv_department field
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR pv_department.
+  " F4 Help or value help logic for pv_department
+
+AT SELECTION-SCREEN ON HELP-REQUEST FOR pv_department.
+  " F1 Help request logic for pv_department
+
+LOAD-OF-PROGRAM.
+  " Load of program logic
+
+START-OF-SELECTION.
+  SELECT * FROM zemployee INTO TABLE gt_employee WHERE department = pv_department.
+  
+  " Additional logic for data processing
+  LOOP AT gt_employee INTO DATA(ls_employee).
+    gv_total_salary = gv_total_salary + ls_employee-salary.
+  ENDLOOP.
+
+END-OF-SELECTION.
+  " Final processing logic
+
+AT LINE-SELECTION.
+  WRITE: / 'Selected Employee:', gt_employee[ sy-tabix ]-employee_id,
+              gt_employee[ sy-tabix ]-employee_name.
+
+TOP-OF-PAGE.
+  gv_page_number = gv_page_number + 1.
+  WRITE: / 'Page:', gv_page_number.
+
+AT USER-COMMAND.
+  " Handling user commands, e.g., PF-STATUS or toolbar buttons
+
+END-OF-PAGE.
+  " Additional logic at the end of each page
